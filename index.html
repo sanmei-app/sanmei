@@ -1172,7 +1172,7 @@ function calc(){
   document.getElementById('t-nenun').innerHTML=nh+'</tbody>';
 
   /* ⑥ 八門法 */
-  const hmKans=[nk,...zkHi.list.map(z=>z.k),...zkTsuki.list.map(z=>z.k),...zkNen.list.map(z=>z.k)];
+  const hmKans=[nk,tsuki.kan,nen.kan,...zkHi.list.map(z=>z.k),...zkTsuki.list.map(z=>z.k),...zkNen.list.map(z=>z.k)];
   const hmShis=[hi.shi,tsuki.shi,nen.shi];
   const hmGG={木:0,火:0,土:0,金:0,水:0};
   for(const k of hmKans){const g=KGOGYO[KAN.indexOf(k)];if(!g)continue;for(const s of hmShis)hmGG[g]+=(JN_PT[juNi(k,s)]||0);}
