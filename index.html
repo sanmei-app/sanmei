@@ -723,7 +723,9 @@ function getNichiNum(y,m,d){
 }
 function ks(ki,si){return{kan:KAN[ki],shi:SHI[si],ki,si,iy:KINYO[ki],gy:KGOGYO[ki]};}
 function getMeishiki(y,m,d){
-  const nki=((y-1864)%10+10)%10,nsi=((y-1864)%12+12)%12;
+  const feb_setsu=getS(y)[1];
+  const nenY=(m<2||(m===2&&d<feb_setsu))?y-1:y;
+  const nki=((nenY-1864)%10+10)%10,nsi=((nenY-1864)%12+12)%12;
   const nen=ks(nki,nsi);
   const smon=getSetsuMon(y,m,d);
   const tsuki=ks(getTsukiKan(nki,smon),smon);
