@@ -801,11 +801,19 @@ function daunDir(nk,gender){
 function daunStart(y,m,d,dir){
   const sd=getS(y)[m-1];let days;
   if(dir==='jun'){
-    if(d<sd){days=sd-d;}
-    else{const nm=m%12,ny=m===12?y+1:y;days=new Date(y,m,0).getDate()-d+getS(ny)[nm];}
+    if(d<sd){
+      // 翌日〜次の節入り日まで（節入り日含む）
+      days=sd-d;
+    }else{
+      // 節入り日当日以降 → 翌月節入り日まで（節入り日含む）
+      const nm=m%12,ny=m===12?y+1:y;
+      days=(new Date(y,m,0).getDate()-d)+getS(ny)[nm];
+    }
   }else{
-    if(d>=sd){days=d-sd;}
-    else{let pm=m-2,py=y;if(pm<0){pm=11;py--;}days=new Date(y,m-1,0).getDate()-getS(py)[pm]+d;}
+    // 逆行：生まれた日 - 節入り日
+    if(d>sd){days=d-sd;}
+    else if(d===sd){days=0;} // 節入り日生まれ → 1歳運
+    else{let pm=m-2,py=y;if(pm<0){pm=11;py--;}days=(new Date(y,m-1,0).getDate()-getS(py)[pm])+d;}
   }
   return Math.max(1,Math.round(days/3));
 }
