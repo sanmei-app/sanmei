@@ -365,6 +365,7 @@ body{
         <table class="insen-table" id="t-insen">
           <tbody><tr><td colspan="4" style="color:#ccc;text-align:center;">算出後に表示されます</td></tr></tbody>
         </table>
+        <div id="meishiki-ison" style="margin-top:8px;"></div>
       </div>
     </div>
   </div>
@@ -1231,6 +1232,9 @@ function calc(){
   /* ⑦ 行動領域の円 */
   drawCircle(hi,tsuki,nen);
 
+  /* ① 命式内位相法 */
+  calcMeishikiIson(hi,tsuki,nen,null);
+
   /* ⑧ 干合変化後 */
   const kanagoResult=applyKanago(nen.kan,tsuki.kan,hi.kan);
   if(!kanagoResult.changed){
@@ -1409,6 +1413,44 @@ function drawCircleKanago(hi2,tsuki2,nen2){
   const leg=document.getElementById('circle-legend');
   if(leg)leg.innerHTML+=`<br><span style="color:${col}">---変化後：年${nenNum}(${nen2.kan}) 月${tsukiNum}(${tsuki2.kan}) 日${hiNum}(${hi2.kan})</span>`;
 }
+
+/* ===== 命式内位相法 ===== */
+function calcMeishikiIson(hi,tsuki,nen,suffix){
+  const elId=suffix?'meishiki-ison-'+suffix:'meishiki-ison';
+  const el=document.getElementById(elId);
+  if(!el)return;
+  const pairs=[
+    {la:'日支',lb:'月支',shiA:hi.shi,  shiB:tsuki.shi,kanA:hi.kan,  kanB:tsuki.kan},
+    {la:'日支',lb:'年支',shiA:hi.shi,  shiB:nen.shi,  kanA:hi.kan,  kanB:nen.kan},
+    {la:'月支',lb:'年支',shiA:tsuki.shi,shiB:nen.shi,  kanA:tsuki.kan,kanB:nen.kan},
+  ];
+  const rows=[];
+  for(const{la,lb,shiA,shiB,kanA,kanB}of pairs){
+    if(isRitsuon(shiA,shiB,kanA,kanB)){
+      rows.push(`<tr><td>${la}（${shiA}）×${lb}（${shiB}）</td><td><span class="itag" style="background:#e8d8f8;color:#6a3ab0;">律音</span></td></tr>`);
+      continue;
+    }
+    const r=isonWithKan(shiA,shiB,kanA,kanB);
+    if(r.length){
+      const tags=r.map(t=>{
+        if(t==='天剋地冲')return`<span class="itag" style="background:#ffe0e0;color:#8b1a1a;">天剋地冲</span>`;
+        if(t==='納音')    return`<span class="itag" style="background:#e0f0e8;color:#1a6a3a;">納音</span>`;
+        if(t==='大半会')  return`<span class="itag" style="background:#e0eaff;color:#1a3a8a;">大半会</span>`;
+        if(t==='干合支合')return`<span class="itag" style="background:#f8e8ff;color:#6a1a8a;">干合支合</span>`;
+        return`<span class="itag">${t}</span>`;
+      }).join('');
+      rows.push(`<tr><td>${la}（${shiA}）×${lb}（${shiB}）</td><td>${tags}</td></tr>`);
+    }
+  }
+  if(rows.length===0){el.innerHTML='';return;}
+  el.innerHTML=`<div style="font-size:12px;color:var(--pink5);font-weight:700;margin-bottom:4px;">命式内　位相法</div><table style="width:100%;border-collapse:collapse;font-size:12px;">${rows.join('')}</table>`;
+  el.querySelectorAll('tr').forEach(tr=>{
+    tr.querySelectorAll('td').forEach(td=>{
+      td.style.cssText='border:0.5px solid var(--pink3);padding:3px 6px;background:#fff;';
+    });
+  });
+}
+
 </script>
 </body>
 </html>
