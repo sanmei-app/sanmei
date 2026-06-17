@@ -959,7 +959,7 @@ function calc(){
   [hi.shi,tsuki.shi,nen.shi].forEach(s=>{const g=SGOGYO[SHI.indexOf(s)];if(g)GG[g]++;});
 
   /* 大運 */
-  const dir=daunDir(nk,gender);
+  const dir=daunDir(nen.kan,gender);
   const start=daunStart(y,m,d,dir);
   const dauns=daunList(tsuki.ki,tsuki.si,dir,start,y);
 
